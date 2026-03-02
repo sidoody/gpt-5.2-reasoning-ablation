@@ -36,6 +36,14 @@ cp .env.example .env
 # add OPENAI_API_KEY=...
 ```
 
+Run a low-cost smoke test before launching the full benchmark:
+
+```bash
+gpt52-ablation run --variants none high --limit 10
+gpt52-ablation grade --variants none high
+gpt52-ablation report --discordant-limit 10
+```
+
 Run a full study:
 
 ```bash
@@ -45,6 +53,39 @@ gpt52-ablation report
 ```
 
 The `report` command is the one-command publish step for analysis artifacts.
+
+## Expected Runtime and Cost
+
+- Runtime and cost scale approximately linearly with case count.
+- Reported latency in this repo ranges from roughly `2.6s` (`none`) to `13.6s` (`high`) per case.
+- Reported average tokens range from roughly `614` (`none`) to `1088` (`high`) per case.
+- For rough budget planning, multiply per-case metrics by your case count and number of variants.
+- Run the smoke test first to validate credentials, API quota, and end-to-end pipeline behavior.
+
+## Reproducibility
+
+This study is deterministic from saved `results/` and `scores/` files into `reports/` outputs.
+
+For a reproducible public release snapshot, record:
+
+- repository commit SHA
+- Python version
+- package versions (`pip freeze` or lockfile)
+- dataset identifier and split (`zou-lab/MedCaseReasoning`, `test`)
+- exact command sequence used for `run`, `grade`, and `report`
+- run date/time window
+
+Recommended release workflow:
+
+1. run the 4-variant benchmark (`none`, `low`, `medium`, `high`)
+2. generate report artifacts with `gpt52-ablation report`
+3. publish the commit SHA and the generated CSV/JSON report files used in your post
+
+## Project Policies
+
+- contribution guidelines: `CONTRIBUTING.md`
+- security reporting: `SECURITY.md`
+- community behavior expectations: `CODE_OF_CONDUCT.md`
 
 ## Publishable Artifacts
 
@@ -57,6 +98,12 @@ The `report` command is the one-command publish step for analysis artifacts.
 - `discordant_none_vs_high.json` (manual audit helper)
 
 These files are designed to be quoted directly in README/blog/LinkedIn posts.
+
+Artifact policy:
+
+- tracked source code should stay clean and reproducible
+- generated study outputs are reproducible and can be regenerated locally
+- if you want immutable publication snapshots, tag a release and attach the exact generated report artifacts used in the write-up
 
 ## Discordant Case Audit Helper
 
@@ -91,4 +138,4 @@ Each exported row includes:
 - **Rare-disease skew:** `MedCaseReasoning` is not representative of everyday case mix.
 - **Judge-model grading:** labels depend on GPT-4.1 grader behavior, even with a fixed rubric.
 - **Visible-rationale scoring:** reasoning is graded only from model-visible rationale output, not hidden chain-of-thought.
-- **`xhigh` exclusion:** `xhigh` exists in exploratory runs but is excluded from the main public 4-variant comparison due to coverage/cost profile.
+- **`xhigh` exclusion:** `xhigh` was run exploratorily but is excluded from the primary public 4-variant analysis (`none`, `low`, `medium`, `high`) due to its coverage/cost profile and reporting scope.
