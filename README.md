@@ -20,11 +20,10 @@ From `reports/summary_metrics.json` and `reports/pairwise_stats.json`:
 | high | 897 | 0.688 | [0.657, 0.717] | 1088.05 | 13.567 |
 
 Pairwise exact McNemar p-values:
-
-- `none vs low`: `0.04326826` (discordant: 48 vs 71)
-- `none vs medium`: `0.00572686` (discordant: 44 vs 75)
-- `none vs high`: `0.00016024` (discordant: 44 vs 88)
-- `low vs high`: `0.03751423` (discordant: 36 vs 57)
+- `none vs low`: `0.04326826` (discordant: none-correct/low-incorrect = 48, none-incorrect/low-correct = 71)
+- `none vs medium`: `0.00572686` (discordant: none-correct/medium-incorrect = 44, none-incorrect/medium-correct = 75)
+- `none vs high`: `0.00016024` (discordant: none-correct/high-incorrect = 44, none-incorrect/high-correct = 88)
+- `low vs high`: `0.03751423` (discordant: low-correct/high-incorrect = 36, low-incorrect/high-correct = 57)
 
 p-values are unadjusted exact McNemar unless otherwise stated.
 
