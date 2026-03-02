@@ -66,22 +66,21 @@ The `report` command is the one-command publish step for analysis artifacts.
 
 ## Reproducibility
 
-This study is deterministic from saved `results/` and `scores/` files into `reports/` outputs.
+All study data is committed to this repository. You can re-derive every report artifact locally at zero cost:
 
-For a reproducible public release snapshot, record:
+\`\`\`bash
+pip install -e .
+gpt52-ablation report
+\`\`\`
 
-- repository commit SHA
-- Python version
-- package versions (`pip freeze` or lockfile)
-- dataset identifier and split (`zou-lab/MedCaseReasoning`, `test`)
-- exact command sequence used for `run`, `grade`, and `report`
-- run date/time window
+This regenerates `reports/` deterministically from the committed `results/` and `scores/` files.
 
-Recommended release workflow:
+For full provenance, record:
 
-1. run the 4-variant benchmark (`none`, `low`, `medium`, `high`)
-2. generate report artifacts with `gpt52-ablation report`
-3. publish the commit SHA and the generated CSV/JSON report files used in your post
+* repository commit SHA
+* Python version
+* package versions (`pip freeze` or lockfile)
+* dataset identifier and split (`zou-lab/MedCaseReasoning`, `test`)
 
 ## Project Policies
 
@@ -103,10 +102,7 @@ Recommended release workflow:
 These files are designed to be quoted directly in README/blog/LinkedIn posts.
 
 Artifact policy:
-
-- tracked source code should stay clean and reproducible
-- generated study outputs are reproducible and can be regenerated locally
-- if you want immutable publication snapshots, tag a release and attach the exact generated report artifacts used in the write-up
+* generated study outputs are committed and can be regenerated locally from `results/` and `scores/`
 
 ## Discordant Case Audit Helper
 
