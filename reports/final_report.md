@@ -16,9 +16,8 @@ All outputs are derived deterministically from files under `results/` and `score
 | Comparison | N | a_correct_b_incorrect | a_incorrect_b_correct | Discordant total | Exact p-value |
 |---|---:|---:|---:|---:|---:|
 | none_vs_low | 897 | 48 | 71 | 119 | 0.04326826 |
-| none_vs_medium | 897 | 44 | 75 | 119 | 0.00572686 |
-| none_vs_high | 897 | 44 | 88 | 132 | 0.00016024 |
-| low_vs_high | 897 | 36 | 57 | 93 | 0.03751423 |
+| low_vs_medium | 897 | 41 | 49 | 90 | 0.46079247 |
+| medium_vs_high | 897 | 36 | 49 | 85 | 0.19276044 |
 
 ## Cost/latency efficiency tradeoff
 

@@ -13,9 +13,8 @@ from .analysis import _load_grade_file, _load_run_file
 PREFERRED_VARIANTS = ("none", "low", "medium", "high")
 PREFERRED_PAIRS = (
     ("none", "low"),
-    ("none", "medium"),
-    ("none", "high"),
-    ("low", "high"),
+    ("low", "medium"),
+    ("medium", "high"),
 )
 WILSON_Z_95 = 1.959963984540054
 
@@ -160,6 +159,87 @@ def _cost_tradeoff_rows(variant_rows: list[dict]) -> list[dict]:
         rows.append(current)
         previous = row
     return rows
+
+
+def _adjacent_p_value_chart_svg(pairwise_rows: list[dict]) -> str:
+    width = 860
+    height = 360
+    margin_left = 80
+    margin_right = 40
+    margin_top = 40
+    margin_bottom = 90
+    plot_width = width - margin_left - margin_right
+    plot_height = height - margin_top - margin_bottom
+
+    if not pairwise_rows:
+        return (
+            f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">'
+            '<rect width="100%" height="100%" fill="#ffffff"/>'
+            '<text x="50%" y="50%" text-anchor="middle" fill="#4b5563" font-size="16" font-family="Arial, sans-serif">'
+            "No adjacent pairwise rows available."
+            "</text>"
+            "</svg>"
+        )
+
+    bars: list[tuple[str, float, float]] = []
+    for row in pairwise_rows:
+        label = f"{row['a_level']}->{row['b_level']}"
+        p_value = max(float(row["mcnemar_exact_p_value"]), 1e-16)
+        neg_log10 = -math.log10(p_value)
+        bars.append((label, p_value, neg_log10))
+
+    y_max = max(1.0, max(neg_log10 for _, _, neg_log10 in bars) * 1.15)
+    zero_y = margin_top + plot_height
+    threshold_value = -math.log10(0.05)
+    threshold_y = margin_top + plot_height - (threshold_value / y_max) * plot_height
+    bar_width = plot_width / max(len(bars), 1) * 0.55
+
+    parts = [
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">',
+        '<rect width="100%" height="100%" fill="#ffffff"/>',
+        '<text x="50%" y="24" text-anchor="middle" fill="#111827" font-size="18" font-family="Arial, sans-serif">Adjacent McNemar exact p-values</text>',
+        f'<line x1="{margin_left}" y1="{zero_y}" x2="{width - margin_right}" y2="{zero_y}" stroke="#111827" stroke-width="1.5"/>',
+        f'<line x1="{margin_left}" y1="{margin_top}" x2="{margin_left}" y2="{zero_y}" stroke="#111827" stroke-width="1.5"/>',
+        f'<line x1="{margin_left}" y1="{threshold_y}" x2="{width - margin_right}" y2="{threshold_y}" stroke="#ef4444" stroke-width="1.2" stroke-dasharray="6 5"/>',
+        f'<text x="{width - margin_right - 8}" y="{threshold_y - 6}" text-anchor="end" fill="#ef4444" font-size="11" font-family="Arial, sans-serif">p=0.05</text>',
+        f'<text x="{margin_left - 54}" y="{margin_top - 8}" fill="#374151" font-size="11" font-family="Arial, sans-serif">-log10(p)</text>',
+    ]
+
+    tick_steps = 4
+    for tick_index in range(tick_steps + 1):
+        tick_value = (tick_index / tick_steps) * y_max
+        y = margin_top + plot_height - (tick_value / y_max) * plot_height
+        tick_label = f"{tick_value:.2f}".rstrip("0").rstrip(".")
+        parts.append(
+            f'<line x1="{margin_left - 4}" y1="{y}" x2="{margin_left}" y2="{y}" stroke="#111827" stroke-width="1"/>'
+        )
+        parts.append(
+            f'<text x="{margin_left - 10}" y="{y + 4}" text-anchor="end" fill="#374151" font-size="10" font-family="Arial, sans-serif">{tick_label}</text>'
+        )
+
+    slot_width = plot_width / max(len(bars), 1)
+    for index, (label, p_value, neg_log10) in enumerate(bars):
+        x_center = margin_left + slot_width * (index + 0.5)
+        bar_height = (neg_log10 / y_max) * plot_height
+        bar_x = x_center - (bar_width / 2)
+        bar_y = zero_y - bar_height
+        parts.append(
+            f'<rect x="{bar_x:.2f}" y="{bar_y:.2f}" width="{bar_width:.2f}" height="{bar_height:.2f}" fill="#3b82f6"/>'
+        )
+        parts.append(
+            f'<text x="{x_center:.2f}" y="{zero_y + 20}" text-anchor="middle" fill="#111827" font-size="11" font-family="Arial, sans-serif">{label}</text>'
+        )
+        parts.append(
+            f'<text x="{x_center:.2f}" y="{max(bar_y - 6, margin_top + 12):.2f}" text-anchor="middle" fill="#1f2937" font-size="10" font-family="Arial, sans-serif">p={p_value:.8f}</text>'
+        )
+
+    parts.append("</svg>")
+    return "".join(parts)
+
+
+def _write_adjacent_p_value_chart(path: Path, pairwise_rows: list[dict]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(_adjacent_p_value_chart_svg(pairwise_rows))
 
 
 def _visible_rationale(run: RunFile, case_id: str) -> str:
@@ -323,6 +403,7 @@ def generate_final_artifacts(settings: StudySettings, discordant_limit: int = 30
     pairwise_csv = base_dir / "pairwise_stats.csv"
     cost_json = base_dir / "cost_latency_tradeoffs.json"
     cost_csv = base_dir / "cost_latency_tradeoffs.csv"
+    adjacent_p_chart_svg = base_dir / "adjacent_mcnemar_p_values.svg"
     report_md = base_dir / "final_report.md"
 
     write_json(summary_json, variant_rows)
@@ -331,6 +412,7 @@ def generate_final_artifacts(settings: StudySettings, discordant_limit: int = 30
     _write_csv(summary_csv, variant_rows)
     _write_csv(pairwise_csv, pairwise_rows)
     _write_csv(cost_csv, cost_rows)
+    _write_adjacent_p_value_chart(adjacent_p_chart_svg, pairwise_rows)
     report_md.write_text(_markdown_report(variant_rows, pairwise_rows, cost_rows))
 
     discordant_none_high = export_discordant_cases(
@@ -345,6 +427,7 @@ def generate_final_artifacts(settings: StudySettings, discordant_limit: int = 30
     print(f"summary metrics: {summary_json}")
     print(f"pairwise stats: {pairwise_json}")
     print(f"cost/latency tradeoffs: {cost_json}")
+    print(f"adjacent p-value chart: {adjacent_p_chart_svg}")
     print(f"markdown report: {report_md}")
     print(f"discordant none_vs_high examples: {len(discordant_none_high)}")
 
@@ -364,6 +447,7 @@ def generate_final_artifacts(settings: StudySettings, discordant_limit: int = 30
         "pairwise_csv": pairwise_csv,
         "cost_json": cost_json,
         "cost_csv": cost_csv,
+        "adjacent_p_values_chart_svg": adjacent_p_chart_svg,
         "report_md": report_md,
         "discordant_none_high_json": base_dir / "discordant_none_vs_high.json",
     }

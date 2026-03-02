@@ -4,7 +4,7 @@ This repository asks one research question:
 
 > Does increasing GPT-5.2 reasoning effort materially improve diagnosis accuracy, and is the gain worth the token/latency cost?
 
-**Main finding (N=897 paired cases):** diagnosis accuracy rises from `0.639` (`none`) to `0.688` (`high`), but each step adds substantial token and latency cost. Pairwise exact McNemar tests show statistically significant gains for `none vs low`, `none vs medium`, `none vs high`, and `low vs high`.
+**Main finding (N=897 paired cases):** diagnosis accuracy rises from `0.639` (`none`) to `0.688` (`high`), but each step adds substantial token and latency cost. Adjacent exact McNemar tests show a significant gain for `none -> low`, while `low -> medium` and `medium -> high` are not individually significant.
 
 **Benchmark caveat:** this is a case-report-heavy, rare-disease-skewed dataset. Treat this as a controlled ablation study, not a general-population clinical benchmark.
 
@@ -12,20 +12,21 @@ This repository asks one research question:
 
 From `reports/summary_metrics.json` and `reports/pairwise_stats.json`:
 
-| Variant | N | Accuracy | 95% CI | Avg total tokens | Avg latency (s) |
-|---|---:|---:|---:|---:|---:|
-| none | 897 | 0.639 | [0.607, 0.670] | 613.61 | 2.608 |
-| low | 897 | 0.664 | [0.633, 0.695] | 782.13 | 5.549 |
-| medium | 897 | 0.673 | [0.642, 0.703] | 935.39 | 10.807 |
-| high | 897 | 0.688 | [0.657, 0.717] | 1088.05 | 13.567 |
+| Variant | N | Accuracy | 95% CI | Avg total tokens | Avg latency (s) | Adjacent McNemar p-value vs previous |
+|---|---:|---:|---:|---:|---:|---:|
+| none | 897 | 0.639 | [0.607, 0.670] | 613.61 | 2.608 | - |
+| low | 897 | 0.664 | [0.633, 0.695] | 782.13 | 5.549 | 0.04326826 (`none -> low`) |
+| medium | 897 | 0.673 | [0.642, 0.703] | 935.39 | 10.807 | 0.46079247 (`low -> medium`) |
+| high | 897 | 0.688 | [0.657, 0.717] | 1088.05 | 13.567 | 0.19276044 (`medium -> high`) |
 
 Pairwise exact McNemar p-values:
-- `none vs low`: `0.04326826` (discordant: none-correct/low-incorrect = 48, none-incorrect/low-correct = 71)
-- `none vs medium`: `0.00572686` (discordant: none-correct/medium-incorrect = 44, none-incorrect/medium-correct = 75)
-- `none vs high`: `0.00016024` (discordant: none-correct/high-incorrect = 44, none-incorrect/high-correct = 88)
-- `low vs high`: `0.03751423` (discordant: low-correct/high-incorrect = 36, low-incorrect/high-correct = 57)
+- `none -> low`: `0.04326826` (discordant: none-correct/low-incorrect = 48, none-incorrect/low-correct = 71)
+- `low -> medium`: `0.46079247` (discordant: low-correct/medium-incorrect = 41, low-incorrect/medium-correct = 49)
+- `medium -> high`: `0.19276044` (discordant: medium-correct/high-incorrect = 36, medium-incorrect/high-correct = 49)
 
 p-values are unadjusted exact McNemar unless otherwise stated.
+
+![Adjacent McNemar exact p-values](reports/adjacent_mcnemar_p_values.svg)
 
 ## Quickstart
 
@@ -95,6 +96,7 @@ Recommended release workflow:
 - `summary_metrics.csv` and `summary_metrics.json`
 - `pairwise_stats.csv` and `pairwise_stats.json`
 - `cost_latency_tradeoffs.csv` and `cost_latency_tradeoffs.json`
+- `adjacent_mcnemar_p_values.svg`
 - `final_report.md`
 - `discordant_none_vs_high.json` (manual audit helper)
 
