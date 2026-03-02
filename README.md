@@ -1,34 +1,37 @@
 # GPT-5.2 Reasoning Effort Ablation
 
+**Main finding:** GPT-5.2's reasoning effort shows sharply diminishing returns for diagnosis. On 897 paired medical cases, the first step (`none`→`low`) significantly improves accuracy (+2.5pp, McNemar p=0.043), but subsequent increases (`low`→`medium`, `medium`→`high`) add tokens and latency without statistically significant gains.
+
 This repository asks one research question:
 
 > Does increasing GPT-5.2 reasoning effort materially improve diagnosis accuracy, and is the gain worth the token/latency cost?
-
-**Main finding (N=897 paired cases):** diagnosis accuracy rises from `0.639` (`none`) to `0.688` (`high`), but each step adds substantial token and latency cost. Adjacent exact McNemar tests show a significant gain for `none -> low`, while `low -> medium` and `medium -> high` are not individually significant.
-
-**Benchmark caveat:** this is a case-report-heavy, rare-disease-skewed dataset. Treat this as a controlled ablation study, not a general-population clinical benchmark.
 
 ## Main Result
 
 From the committed artifacts in `reports/`:
 
 | Variant | N | Accuracy | 95% CI | Avg total tokens | Avg latency (s) | Adjacent McNemar p-value vs previous |
-|---|---:|---:|---:|---:|---:|---:|
+|---------|-----|----------|----------------|------------------|------------------|--------------------------------------|
 | none | 897 | 0.639 | [0.607, 0.670] | 613.61 | 2.608 | - |
-| low | 897 | 0.664 | [0.633, 0.695] | 782.13 | 5.549 | 0.04326826 (`none -> low`) |
-| medium | 897 | 0.673 | [0.642, 0.703] | 935.39 | 10.807 | 0.46079247 (`low -> medium`) |
-| high | 897 | 0.688 | [0.657, 0.717] | 1088.05 | 13.567 | 0.19276044 (`medium -> high`) |
+| low | 897 | 0.664 | [0.633, 0.695] | 782.13 | 5.549 | 0.04326826 (none → low) |
+| medium | 897 | 0.673 | [0.642, 0.703] | 935.39 | 10.807 | 0.46079247 (low → medium) |
+| high | 897 | 0.688 | [0.657, 0.717] | 1088.05 | 13.567 | 0.19276044 (medium → high) |
 
 Pairwise exact McNemar p-values:
 
-- `none -> low`: `0.04326826` (discordant: none-correct/low-incorrect = 48, none-incorrect/low-correct = 71)
-- `low -> medium`: `0.46079247` (discordant: low-correct/medium-incorrect = 41, low-incorrect/medium-correct = 49)
-- `medium -> high`: `0.19276044` (discordant: medium-correct/high-incorrect = 36, medium-incorrect/high-correct = 49)
+- **none → low:** 0.04326826 (discordant: none-correct/low-incorrect = 48, none-incorrect/low-correct = 71)
+- **low → medium:** 0.46079247 (discordant: low-correct/medium-incorrect = 41, low-incorrect/medium-correct = 49)
+- **medium → high:** 0.19276044 (discordant: medium-correct/high-incorrect = 36, medium-incorrect/high-correct = 49)
 
 p-values are unadjusted exact McNemar unless otherwise stated.
 
 ![Adjacent McNemar exact p-values](reports/adjacent_mcnemar_p_values.svg)
 
+## Scope and Design Choices
+
+This study is intentionally scoped as a controlled ablation on a single axis (reasoning effort) with a fixed grader model. We report unadjusted p-values for adjacent comparisons only to minimize the multiple testing burden; the none→low result is borderline and would not survive Bonferroni correction — interpret accordingly. Effect sizes and inter-rater reliability checks against a second grader are natural extensions but are out of scope for this initial release.
+
+The dataset ([zou-lab/MedCaseReasoning](https://huggingface.co/datasets/zou-lab/MedCaseReasoning), test split) skews toward rare diseases and complex case reports. These results characterize reasoning effort scaling on *hard* cases, not general-population clinical performance.
 ## Quickstart
 
 ```bash
