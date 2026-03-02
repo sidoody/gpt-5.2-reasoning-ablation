@@ -1,0 +1,5 @@
+reasoning_effort,variant_id,n,correct,accuracy,accuracy_ci95_low,accuracy_ci95_high,avg_total_tokens,avg_reasoning_tokens,avg_latency_seconds
+none,gpt-5.2__reasoning-none,897,573,0.638796,0.606831,0.669577,613.61,0.0,2.608
+low,gpt-5.2__reasoning-low,897,596,0.664437,0.632893,0.694578,782.13,163.83,5.549
+medium,gpt-5.2__reasoning-medium,897,604,0.673356,0.641982,0.703251,935.39,315.06,10.807
+high,gpt-5.2__reasoning-high,897,617,0.687848,0.656778,0.717317,1088.05,468.38,13.567

@@ -1,0 +1,2 @@
+[console_scripts]
+gpt52-ablation = gpt_5_2_reasoning_ablation.cli:main

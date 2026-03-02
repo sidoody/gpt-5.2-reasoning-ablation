@@ -1,0 +1,21 @@
+{
+  "dataset_name": "zou-lab/MedCaseReasoning",
+  "dataset_split": "test",
+  "max_cases": null,
+  "model": "gpt-5.2",
+  "grader_model": "gpt-4.1",
+  "reasoning_levels": [
+    "none",
+    "low",
+    "medium",
+    "high"
+  ],
+  "max_output_tokens": 2400,
+  "grader_max_output_tokens": 1000,
+  "text_verbosity": "low",
+  "reasoning_summary": "concise",
+  "temperature": 0,
+  "results_dir": "results",
+  "scores_dir": "scores",
+  "reports_dir": "reports"
+}

@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gpt-5.2-reasoning-ablation"
+version = "0.1.0"
+description = "Open-source evaluation harness for GPT-5.2 reasoning-ablation on clinical diagnosis cases."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+dependencies = [
+  "datasets>=2.19.0",
+  "openai>=2.0.0",
+  "pydantic>=2.7.0",
+  "python-dotenv>=1.0.1",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0.0",
+]
+
+[project.scripts]
+gpt52-ablation = "gpt_5_2_reasoning_ablation.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["gpt_5_2_reasoning_ablation*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

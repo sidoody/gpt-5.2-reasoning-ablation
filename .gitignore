@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.pytest_cache/
+.mypy_cache/
+.coverage
+
+# Virtual environments
+.venv/
+venv/
+
+# Environment files
+.env
+
+# OS/editor
+.DS_Store
+.vscode/
+.idea/
+
+# Generated artifacts
+results/*.json
+scores/*.json
+reports/*.json
