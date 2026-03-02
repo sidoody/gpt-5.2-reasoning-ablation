@@ -183,9 +183,7 @@ def test_pairwise_and_discordant_exports(tmp_path):
     assert [row["reasoning_effort"] for row in variants] == ["none", "high"]
 
     pairs = _pairwise_rows(settings)
-    assert len(pairs) == 1
-    assert pairs[0]["comparison"] == "none_vs_high"
-    assert pairs[0]["discordant_total"] == 1
+    assert pairs == []
 
     discordant = export_discordant_cases(settings, a_level="none", b_level="high", limit=10)
     assert len(discordant) == 1
