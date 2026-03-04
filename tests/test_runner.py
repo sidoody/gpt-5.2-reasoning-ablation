@@ -34,19 +34,19 @@ def test_extract_output_json_reads_parsed_block():
 
 def test_max_structured_output_tokens_uses_public_retry_ceiling_for_all_variants():
     settings = StudySettings(max_output_tokens=1200)
-    xhigh_variant = ModelVariant(model="gpt-5.2", reasoning_effort="xhigh")
+    low_variant = ModelVariant(model="gpt-5.2", reasoning_effort="low")
     high_variant = ModelVariant(model="gpt-5.2", reasoning_effort="high")
 
-    assert max_structured_output_tokens(settings, xhigh_variant) == 9600
+    assert max_structured_output_tokens(settings, low_variant) == 9600
     assert max_structured_output_tokens(settings, high_variant) == 9600
 
 
 def test_initial_output_tokens_starts_from_configured_base_budget():
     settings = StudySettings(max_output_tokens=1200)
-    xhigh_variant = ModelVariant(model="gpt-5.2", reasoning_effort="xhigh")
+    none_variant = ModelVariant(model="gpt-5.2", reasoning_effort="none")
     medium_variant = ModelVariant(model="gpt-5.2", reasoning_effort="medium")
 
-    assert initial_output_tokens(settings, xhigh_variant) == 1200
+    assert initial_output_tokens(settings, none_variant) == 1200
     assert initial_output_tokens(settings, medium_variant) == 1200
 
 

@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 *.so
+*.egg-info/
 .pytest_cache/
 .mypy_cache/
 .coverage
@@ -17,8 +18,3 @@ venv/
 .DS_Store
 .vscode/
 .idea/
-
-# Generated artifacts
-results/*.json
-scores/*.json
-reports/*.json

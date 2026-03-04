@@ -60,12 +60,13 @@ Scoring is frozen:
 - average total tokens
 - average reasoning tokens
 
-## 4. Overthinking analysis
+## 4. Pairwise analysis
 
-`gpt52-ablation analyze-overthinking` compares adjacent reasoning-effort pairs (`none->low`, `low->medium`, `medium->high`) and reports:
+`gpt52-ablation analyze-pairs` compares all unique pairs among observed reasoning-effort variants and reports:
 
 - shared-case counts
 - `lower_only_correct` and `higher_only_correct`
 - McNemar chi-square statistic with continuity correction
+- raw McNemar p-values and Holm-adjusted p-values across the full pairwise family
 - mean reasoning-alignment delta (`lower - higher`)
 - up to 10 examples where lower effort was correct and higher effort was not

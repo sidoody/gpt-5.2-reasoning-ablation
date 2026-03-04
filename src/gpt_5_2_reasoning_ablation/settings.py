@@ -5,7 +5,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-SUPPORTED_REASONING_LEVELS = ("none", "low", "medium", "high", "xhigh")
+SUPPORTED_REASONING_LEVELS = ("none", "low", "medium", "high")
 DEFAULT_REASONING_LEVELS = ("none", "low", "medium", "high")
 DEFAULT_DATASET_NAME = "zou-lab/MedCaseReasoning"
 DEFAULT_DATASET_SPLIT = "test"
