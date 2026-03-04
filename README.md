@@ -1,20 +1,6 @@
-Does GPT-5.2 get better at clinical diagnosis when you ask it to think harder? On this benchmark, yes overall. Is it worth the cost? Depends.
+Does GPT-5.2 get better at clinical diagnosis when you ask it to think harder? 
 
 On 897 paired clinical benchmark cases, diagnosis accuracy increased from 63.9% at `none` to 68.8% at `high`. But the cost curve was steep: average latency rose from 2.6s to 13.6s, and average total tokens rose from 614 to 1,088.
-
-`low` captures about half of the total accuracy gain from `none` to `high` (+2.56 percentage points vs. +4.91 points) while adding much less latency and token cost than going all the way to `high`. That makes `low` the most attractive practical efficiency candidate on this curve, even though the `none -> low` pairwise comparison does not remain significant after Holm correction (`p = 0.15`).
-
-After Holm correction across all pairwise McNemar tests:
-
-* **`none` vs `high`**: `p < 0.001`
-* **`none` vs `medium`**: `p = 0.029`
-* **`none` vs `low`**: `p = 0.15`
-* adjacent steps: not significant after correction
-
-The pattern is monotonic: each increase in reasoning effort improved raw benchmark accuracy. But after multiple-comparison correction, the clearest statistical evidence is for the cumulative improvements from `none -> medium` and `none -> high`, not for every individual step.
-
-More reasoning helps on this benchmark, but the marginal gains shrink while latency and token costs rise quickly. If you care most about efficiency, `low` is a strong candidate. If you care most about maximum accuracy, `high` wins, but you pay heavily for it.
-
 
 ---
 
@@ -29,16 +15,14 @@ More reasoning helps on this benchmark, but the marginal gains shrink while late
 
 After Holm correction across all pairwise McNemar tests:
 
-- **`none` vs `high`**: `p = <0.0001` (significant)
+- **`none` vs `high`**: `p = <0.001` (significant)
 - **`none` vs `medium`**: `p = 0.029` (significant)
 - **`none` vs `low`**: `p = 0.15` (not significant after correction)
 - Adjacent steps (`low` vs `medium`, `medium` vs `high`): not significant after correction
 
-The pattern is monotonic: each increase in reasoning effort improved raw benchmark accuracy. But once multiple-comparison correction is applied, the clearest evidence is for the cumulative improvements from `none -> medium` and `none -> high`, not for every adjacent step.
 
-**Practical read:** more reasoning helps on this benchmark, but the marginal gains shrink while latency and token costs rise quickly. If you care most about efficiency, `low` is attractive. If you care most about maximum accuracy, `high` wins - but you pay heavily for it.
+The pattern is monotonic: each increase in reasoning effort improved raw benchmark accuracy. But after multiple-comparison correction, the clearest statistical evidence is for the cumulative improvements from `none -> medium` and `none -> high`, not for every individual step.
 
-This repo contains the full evaluation: committed model outputs, committed grading data, and a deterministic reporting pipeline that rebuilds the analysis without rerunning inference.
 
 ---
 
@@ -56,8 +40,6 @@ This repo contains the full evaluation: committed model outputs, committed gradi
 
 GPT-4.1 is used as the fixed judge model to keep grading consistent across all reasoning variants. It is also used in OpenAI's [HealthBench](https://openai.com/index/healthbench/) evaluation framework and has published physician-agreement results in that setting.
 
-Using a grader with external validation is stronger than choosing an untested model ad hoc, and holding the grader fixed helps isolate the effect of reasoning effort from grader variability.
-
 This does **not** eliminate grader risk. The evaluated model and grader are both OpenAI models, so shared blind spots remain possible. A physician-adjudicated audit of a stratified sample is planned for a future version to characterize where automated grading agrees and disagrees with clinical judgment.
 
 ---
@@ -71,7 +53,7 @@ This repository does **not**:
 - test across model families (Claude/Gemini comparison is next)
 - make clinical deployment or safety claims
 
-This is a benchmark study. It tells you how the reasoning-effort knob moves accuracy on a specific set of hard diagnostic cases. Real deployment decisions need more than this.
+This is a benchmark study. It tells you how the reasoning-effort knob moves accuracy on a specific set of hard diagnostic cases. 
 
 ---
 
@@ -151,6 +133,8 @@ tests/               # automated tests
 **Cross-model comparison.** This study is GPT-5.2 only. Extending the same pipeline to Claude and Gemini with identical grading would show whether the reasoning-effort tradeoff is model-specific or general.
 
 **Benchmark skew.** MedCaseReasoning is built from published case reports and is heavily skewed toward complex, rare-disease presentations. Accuracy numbers here are likely lower than what you'd see on routine clinical questions.
+
+**Analyze the reasoning alignment scores** The grading pipeline already captures a 0-4 reasoning quality score alongside diagnosis correctness, but this version of the study only reports the binary diagnosis outcome.
 
 ---
 
