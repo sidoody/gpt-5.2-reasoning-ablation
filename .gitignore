@@ -17,8 +17,3 @@ venv/
 .DS_Store
 .vscode/
 .idea/
-
-# Generated artifacts
-results/*.json
-scores/*.json
-reports/*.json

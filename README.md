@@ -10,7 +10,7 @@ This repository asks one research question:
 
 From the committed artifacts in `reports/`:
 
-| Variant | N | Accuracy | 95% CI | Avg total tokens | Avg latency (s) | Adjacent McNemar p-value vs previous |
+| Variant | N | Accuracy | 95% CI | Avg total tokens | Avg latency (s) | Pairwise McNemar p-value vs previous |
 |---------|-----|----------|----------------|------------------|------------------|--------------------------------------|
 | none | 897 | 0.639 | [0.607, 0.670] | 613.61 | 2.608 | - |
 | low | 897 | 0.664 | [0.633, 0.695] | 782.13 | 5.549 | 0.04326826 (none → low) |
@@ -25,11 +25,11 @@ Pairwise exact McNemar p-values:
 
 p-values are unadjusted exact McNemar unless otherwise stated.
 
-![Adjacent McNemar exact p-values](reports/adjacent_mcnemar_p_values.svg)
+![Pairwise McNemar exact p-values](reports/pairwise_mcnemar_p_values.svg)
 
 ## Scope and Design Choices
 
-This study is intentionally scoped as a controlled ablation on a single axis (reasoning effort) with a fixed grader model. We report unadjusted p-values for adjacent comparisons only to minimize the multiple testing burden; the none→low result is borderline and would not survive Bonferroni correction — interpret accordingly. Effect sizes and inter-rater reliability checks against a second grader are natural extensions but are out of scope for this initial release.
+This study is intentionally scoped as a controlled ablation on a single axis (reasoning effort) with a fixed grader model. We report unadjusted p-values for pairwise step-up comparisons to minimize the multiple testing burden; the none→low result is borderline and would not survive Bonferroni correction — interpret accordingly. Effect sizes and inter-rater reliability checks against a second grader are natural extensions but are out of scope for this initial release.
 
 The dataset ([zou-lab/MedCaseReasoning](https://huggingface.co/datasets/zou-lab/MedCaseReasoning), test split) skews toward rare diseases and complex case reports. These results characterize reasoning effort scaling on *hard* cases, not general-population clinical performance.
 ## Quickstart
@@ -92,7 +92,7 @@ This rebuilds the final summary artifacts deterministically from the committed s
 - `summary_metrics.csv` and `summary_metrics.json`
 - `pairwise_stats.csv` and `pairwise_stats.json`
 - `cost_latency_tradeoffs.csv` and `cost_latency_tradeoffs.json`
-- `adjacent_mcnemar_p_values.svg`
+- `pairwise_mcnemar_p_values.svg`
 - `final_report.md`
 - `discordant_none_vs_high.json` (manual audit helper)
 
@@ -149,4 +149,3 @@ Reported statistics:
 - **Rare-disease skew:** `MedCaseReasoning` is not representative of everyday case mix.
 - **Judge-model grading:** labels depend on GPT-4.1 grader behavior, even with a fixed rubric.
 - **Visible-rationale scoring:** reasoning is graded only from model-visible rationale output, not hidden chain-of-thought.
-- **`xhigh` exclusion:** `xhigh` was run exploratorily but is excluded from the primary public 4-variant analysis (`none`, `low`, `medium`, `high`) due to its coverage/cost profile and reporting scope.

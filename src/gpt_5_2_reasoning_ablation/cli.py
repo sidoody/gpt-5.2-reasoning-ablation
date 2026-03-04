@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import argparse
 
-from .analysis import analyze_overthinking, summarize_runs
+from .analysis import analyze_pairs, summarize_runs
 from .grading import grade_variants
 from .reporting import export_discordant_cases, generate_final_artifacts
 from .runner import run_variants
@@ -30,8 +30,12 @@ def build_parser() -> argparse.ArgumentParser:
     summarize_parser = subparsers.add_parser("summarize", help="Summarize completed runs.")
     summarize_parser.add_argument("--write", default=None, help="Optional JSON output path for the summary rows.")
 
-    overthinking_parser = subparsers.add_parser("analyze-overthinking", help="Pairwise analysis across reasoning settings.")
-    overthinking_parser.add_argument("--write", default=None, help="Optional JSON output path for the pairwise analysis.")
+    pairwise_parser = subparsers.add_parser(
+        "analyze-pairs",
+        aliases=["analyze-overthinking"],
+        help="Pairwise analysis across reasoning settings.",
+    )
+    pairwise_parser.add_argument("--write", default=None, help="Optional JSON output path for the pairwise analysis.")
 
     report_parser = subparsers.add_parser(
         "report",
@@ -67,8 +71,8 @@ def main() -> None:
         grade_variants(settings, requested_variants=args.variants, overwrite=args.overwrite)
     elif args.command == "summarize":
         summarize_runs(settings, write_path=args.write)
-    elif args.command == "analyze-overthinking":
-        analyze_overthinking(settings, write_path=args.write)
+    elif args.command in {"analyze-pairs", "analyze-overthinking"}:
+        analyze_pairs(settings, write_path=args.write)
     elif args.command == "report":
         generate_final_artifacts(settings, discordant_limit=args.discordant_limit)
     elif args.command == "export-discordant":

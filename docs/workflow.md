@@ -60,9 +60,9 @@ Scoring is frozen:
 - average total tokens
 - average reasoning tokens
 
-## 4. Overthinking analysis
+## 4. Pairwise analysis
 
-`gpt52-ablation analyze-overthinking` compares adjacent reasoning-effort pairs (`none->low`, `low->medium`, `medium->high`) and reports:
+`gpt52-ablation analyze-pairs` compares pairwise step-up reasoning-effort pairs (`none->low`, `low->medium`, `medium->high`) and reports:
 
 - shared-case counts
 - `lower_only_correct` and `higher_only_correct`

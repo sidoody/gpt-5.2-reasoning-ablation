@@ -100,7 +100,7 @@ def _mcnemar_statistic(a_only: int, b_only: int) -> float:
     return ((abs(a_only - b_only) - 1) ** 2) / discordant
 
 
-def analyze_overthinking(settings: StudySettings, write_path: str | None = None) -> list[dict]:
+def analyze_pairs(settings: StudySettings, write_path: str | None = None) -> list[dict]:
     levels = list(SUPPORTED_REASONING_LEVELS)
     comparisons: list[dict] = []
 
@@ -154,7 +154,7 @@ def analyze_overthinking(settings: StudySettings, write_path: str | None = None)
         print("No pairwise comparisons available yet.")
         return comparisons
 
-    print("\n=== Overthinking analysis ===")
+    print("\n=== Pairwise analysis ===")
     for item in comparisons:
         print(
             f"{item['lower_effort']} -> {item['higher_effort']} | shared={item['cases_shared']} | "
@@ -163,3 +163,8 @@ def analyze_overthinking(settings: StudySettings, write_path: str | None = None)
             f"reasoning_delta={item['mean_reasoning_alignment_delta']:.3f}"
         )
     return comparisons
+
+
+def analyze_overthinking(settings: StudySettings, write_path: str | None = None) -> list[dict]:
+    """Deprecated alias for analyze_pairs."""
+    return analyze_pairs(settings, write_path=write_path)

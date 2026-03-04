@@ -25,8 +25,6 @@ This repository evaluates four public GPT-5.2 configurations:
 - `medium`
 - `high`
 
-Note: `xhigh` was explored separately and is excluded from the main published analysis due to higher cost/latency and incomplete coverage.
-
 It uses **GPT-4.1 as the single grader everywhere** so that scoring stays consistent across all ablation runs.
 
 This is a **case-report-heavy, rare-disease-skewed evaluation**. It should not be interpreted as a general-population clinical benchmark.
@@ -157,10 +155,10 @@ gpt52-ablation grade --variants none low medium high
 gpt52-ablation summarize
 ```
 
-### 4) Inspect overthinking patterns
+### 4) Inspect pairwise patterns
 
 ```bash
-gpt52-ablation analyze-overthinking
+gpt52-ablation analyze-pairs
 ```
 
 ## Useful run options
